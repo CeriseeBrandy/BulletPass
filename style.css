@@ -913,19 +913,6 @@ html, body {
     }
 }
 
-/* Contenu modal */
-.modal-overlay > div {
-    width: 100% !important;
-    max-width: 480px !important;
-    max-height: 90dvh !important;
-
-    border-radius: 20px 20px 0 0 !important;
-    padding: 25px 20px !important;
-
-    overflow-y: auto;
-    box-sizing: border-box !important;
-}
-
 /* Titre */
 .modal-overlay h3 {
     font-size: 1rem !important;
@@ -960,11 +947,21 @@ html, body {
 /* Desktop ajustements */
 @media (min-width: 768px) {
     .modal-overlay > div {
-        max-width: 500px !important;
-        border-radius: 16px !important;
-        max-height: 85vh !important;
-        padding: 35px !important;
-    }
+    width: 92% !important;
+    max-width: 420px !important;
+
+    margin: 0 auto;
+
+    max-height: 85dvh !important;
+
+    border-radius: 20px !important;
+
+    padding: 20px !important;
+    padding-bottom: calc(20px + env(safe-area-inset-bottom));
+
+    overflow-y: auto;
+    box-sizing: border-box !important;
+}
 
     .modal-overlay > div::before {
         display: none;
