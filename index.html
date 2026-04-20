@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bullet Password Manager</title>
+
+    <!-- PWA -->
+    <link rel="manifest" href="manifest.json">
+
+    <!-- Icons -->
+    <link rel="icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" href="/assets/icon.png">
+    <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+    <!-- LOGIN SCREEN -->
+    <div id="login-screen">
+        <div class="login-card">
+
+            <button id="install-btn" onclick="installApp()" class="install-btn">⬇️</button>
+
+            <div class="login-icon-header">
+                <img src="assets/icon.png" alt="Bullet Logo">
+            </div>
+
+            <div class="login-inputs">
+                <input type="text" id="nickname" placeholder="Nickname">
+                <input type="password" id="master-password" placeholder="Master Password">
+
+                <label style="color:#aaa; font-size:0.85rem; display:flex; align-items:center; gap:10px; margin-top:10px;">
+                    <input type="checkbox" id="remember-me">
+                    Remember me
+                </label>
+
+                <div id="setup-warning" style="display:none;"></div>
+
+                <p id="login-error" class="login-error-msg">Incorrect credentials</p>
+
+                <p onclick="openRecoveryModal()" style="cursor:pointer;">
+                    Forgot your password?
+                </p>
+            </div>
+
+            <button id="unlock-btn" onclick="checkMasterPassword()">
+                Sign in
+            </button>
+
+        </div>
+    </div>
+
+    <!-- APP -->
+    <div class="app-container">
+
+        <!-- SIDEBAR (desktop) -->
+        <nav class="sidebar">
+            <div class="logo">
+                <img src="assets/icon.png" alt="Logo">
+                BULLET
+            </div>
+            <div class="menu">
+                <div id="btn-generator" class="menu-item active" onclick="showSection('generator')">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    <span class="menu-text">GENERATOR</span>
+                </div>
+                <div id="btn-vault" class="menu-item" onclick="showSection('vault')">
+                    <i class="fa-solid fa-vault"></i>
+                    <span class="menu-text">VAULT</span>
+                </div>
+                <div id="btn-backup" class="menu-item" onclick="showSection('backup')">
+                    <i class="fa-solid fa-box"></i>
+                    <span class="menu-text">BACKUP</span>
+                </div>
+                <div id="btn-about" class="menu-item" onclick="showSection('about')">
+                    <i class="fa-solid fa-user-shield"></i>
+                    <span class="menu-text">SECURITY</span>
+                </div>
+                <div id="btn-settings" class="menu-item" onclick="showSection('settings')">
+                    <i class="fa-solid fa-gear"></i>
+                    <span class="menu-text">SETTINGS</span>
+                </div>
+            </div>
+        </nav>
+
+        <!-- MAIN CONTENT -->
+        <main class="content">
+
+            <!-- GENERATOR -->
+            <section id="generator-view">
+                <h1>Ammunition Generator</h1>
+                <div class="gen-card small-card">
+                    <div class="pass-container">
+                        <input type="text" id="pass-display" readonly placeholder="GENERATE A PASSWORD">
+                        <button id="copy-btn" onclick="copyToClipboard()"><i class="fa-regular fa-copy"></i></button>
+                    </div>
+                    <div class="setting-item">
+                        <label style="color:var(--text-dim); font-size:0.8rem; font-weight:bold;">
+                            LENGTH : <span id="length-val" style="color:#fff; float:right;">16</span>
+                        </label>
+                        <input type="range" id="length-slider" min="8" max="32" value="16"
+                            oninput="updateLength(this.value)"
+                            style="width:100%; margin:15px 0; accent-color:#fff;">
+                    </div>
+                    <div class="switches-compact">
+                        <label><input type="checkbox" id="check-symbols" checked> SYMBOLS</label>
+                        <label><input type="checkbox" id="check-numbers" checked> NUMBERS</label>
+                    </div>
+                    <button id="gen-btn" onclick="askPythonPassword()">GENERATE PASSWORD</button>
+                </div>
+            </section>
+
+            <!-- VAULT -->
+            <section id="vault-view" style="display:none;">
+                <h1>Password Vault</h1>
+
+                <div class="gen-card" style="width:100%; max-width:850px; margin-bottom:25px; padding:15px 20px; background:#0d0d0f; border-radius:12px; border:1px solid var(--metal-border);">
+                    <div class="vault-form">
+                        <input type="text"     id="vault-site" placeholder="URL (ex: twitch.tv)"    style="background:#1C1C1E; border:1px solid #3A3A3C; padding:10px; border-radius:8px; color:white; outline:none; font-size:0.85rem;">
+                        <input type="text"     id="vault-user" placeholder="Username / Email"        style="background:#1C1C1E; border:1px solid #3A3A3C; padding:10px; border-radius:8px; color:white; outline:none; font-size:0.85rem;">
+                        <input type="text"     id="vault-pass" placeholder="Password" autocomplete="new-password" style="background:#1C1C1E; border:1px solid #3A3A3C; padding:10px; border-radius:8px; color:white; outline:none; font-size:0.85rem;">
+                        <button onclick="addEntryToVault()" class="btn-neon">Add</button>
+                    </div>
+                </div>
+
+                <div style="width:100%; max-width:850px; margin-bottom:20px; position:relative;">
+                    <i class="fa-solid fa-magnifying-glass" style="position:absolute; left:15px; top:12px; color:#555; font-size:0.9rem;"></i>
+                    <input type="text" id="vault-search" placeholder="Search for ammunition..."
+                        oninput="loadVault()"
+                        style="width:100%; background:#0d0d0f; border:1px solid var(--metal-border); padding:10px 10px 10px 40px; border-radius:10px; color:white; outline:none; font-size:0.85rem;">
+                </div>
+
+                <div id="vault-list" style="width:100%; max-width:850px; display:flex; flex-direction:column; gap:15px;"></div>
+            </section>
+
+            <!-- BACKUP -->
+            <section id="backup-view" style="display:none;">
+                <h1>Backup Management</h1>
+
+                <div class="gen-card" style="width:100%; max-width:850px; padding:25px; background:#0d0d0f; border-radius:12px; border:1px solid var(--metal-border);">
+                    <h3 style="margin-top:0;">EXPORT</h3>
+                    <p style="color:var(--text-dim); font-size:0.9rem;">Save your data in a secure file.</p>
+                    <button onclick="exportVault()" class="btn-neon" style="margin-top:10px;">EXPORT BACKUP</button>
+
+                    <hr style="margin:25px 0; border:1px solid rgba(255,255,255,0.1);">
+
+                    <h3>IMPORT</h3>
+                    <p style="color:var(--text-dim); font-size:0.9rem;">Restore an existing backup.</p>
+                    <input type="file" id="import-file" accept=".json" style="display:none;">
+                    <button onclick="triggerImport()" class="btn-neon" style="margin-top:10px;">IMPORT BACKUP</button>
+                </div>
+            </section>
+
+            <!-- SECURITY -->
+            <section id="about-view" style="display:none;">
+                <h1>Security & Confidentiality</h1>
+
+                <div class="gen-card" style="width:100%; max-width:850px; padding:25px; background:#0d0d0f; border-radius:12px; border:1px solid var(--metal-border);">
+                    <h3>🔐 LOCAL STORAGE</h3>
+                    <p style="color:var(--text-dim); font-size:0.9rem;">
+                        All your data is stored locally on your device.<br>
+                        No information is sent over the internet.
+                    </p>
+
+                    <hr style="margin:25px 0; border:1px solid rgba(255,255,255,0.1);">
+
+                    <h3>🔍 LEAK CHECK</h3>
+                    <p style="color:var(--text-dim); font-size:0.9rem;">
+                        Passwords are verified via Have I Been Pwned API.<br><br>
+                        ⚠️ Only a part of the hash is sent (k-anonymity).<br>
+                        Your full password is never transmitted.
+                    </p>
+
+                    <hr style="margin:25px 0; border:1px solid rgba(255,255,255,0.1);">
+
+                    <h3>⚠️ LIMITES</h3>
+                    <p style="color:var(--text-dim); font-size:0.9rem;">
+                        This check only indicates whether a password has already been seen in leaks.<br>
+                        It does not allow you to know if your personal account has been compromised.
+                    </p>
+                </div>
+            </section>
+
+            <!-- SETTINGS -->
+            <section id="settings-view" style="display:none;">
+                <h1>Arsenal settings</h1>
+
+                <div class="gen-card" style="width:100%; max-width:850px; padding:25px; background:#0d0d0f; border-radius:12px; border:1px solid var(--metal-border);">
+                    <h3 style="margin-top:0;">SECURITY</h3>
+                    <p style="color:var(--text-dim); font-size:0.9rem;">
+                        In case you lose your master password, this key is your only access.
+                    </p>
+                    <button onclick="showRecoveryKey()" style="margin-top:15px; background:#1c1c1e; color:white; border:1px solid #3a3a3c; padding:10px 20px; border-radius:8px; cursor:pointer; font-weight:bold;">
+                        DISPLAY MY EMERGENCY KEY
+                    </button>
+
+                    <hr style="margin:25px 0; border:1px solid rgba(255,255,255,0.1);">
+
+                    <h3>LOCKING TIME</h3>
+                    <p style="color:var(--text-dim); font-size:0.9rem;">
+                        Choose how long before the application locks automatically.
+                    </p>
+                    <input type="number" id="inactivity-time" min="1" max="60" value="2"
+                        style="width:100%; background:#1C1C1E; border:1px solid #3A3A3C; padding:10px; border-radius:8px; color:white; outline:none; font-size:0.85rem; margin-top:10px;">
+
+                    <hr style="margin:25px 0; border:1px solid rgba(255,255,255,0.1);">
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- ================================
+         TOPBAR MOBILE (visible mobile only)
+         ================================ -->
+    <div class="mobile-topbar">
+        <div class="mobile-topbar-logo">
+            <img src="assets/icon.png" alt="Logo">
+            BULLET
+        </div>
+        <button class="hamburger-btn" id="hamburger-btn" onclick="toggleSlideNav()" aria-label="Menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+    </div>
+
+    <!-- Overlay fond sombre -->
+    <div class="slide-nav-overlay" id="slide-nav-overlay" onclick="closeSlideNav()"></div>
+
+    <!-- ================================
+         SLIDE NAV PANEL
+         ================================ -->
+    <nav class="slide-nav" id="slide-nav">
+        <div class="slide-nav-header">
+            <img src="assets/icon.png" alt="Logo">
+            <span>BULLET</span>
+        </div>
+
+        <button class="slide-nav-item active" id="mob-btn-generator" onclick="showSection('generator'); closeSlideNav()">
+            <i class="fa-solid fa-wand-magic-sparkles"></i>
+            GENERATOR
+        </button>
+        <button class="slide-nav-item" id="mob-btn-vault" onclick="showSection('vault'); closeSlideNav()">
+            <i class="fa-solid fa-vault"></i>
+            VAULT
+        </button>
+        <button class="slide-nav-item" id="mob-btn-backup" onclick="showSection('backup'); closeSlideNav()">
+            <i class="fa-solid fa-box"></i>
+            BACKUP
+        </button>
+        <button class="slide-nav-item" id="mob-btn-about" onclick="showSection('about'); closeSlideNav()">
+            <i class="fa-solid fa-user-shield"></i>
+            SECURITY
+        </button>
+        <button class="slide-nav-item" id="mob-btn-settings" onclick="showSection('settings'); closeSlideNav()">
+            <i class="fa-solid fa-gear"></i>
+            SETTINGS
+        </button>
+    </nav>
+
+    <script src="crypto.js"></script>
+    <script src="script.js"></script>
+
+    <!-- Slide nav JS + sync active state -->
+    <script>
+        /* --- Slide nav --- */
+        function toggleSlideNav() {
+            const nav     = document.getElementById('slide-nav');
+            const overlay = document.getElementById('slide-nav-overlay');
+            const burger  = document.getElementById('hamburger-btn');
+            const isOpen  = nav.classList.contains('open');
+            if (isOpen) {
+                closeSlideNav();
+            } else {
+                nav.classList.add('open');
+                overlay.classList.add('visible');
+                burger.classList.add('open');
+                document.body.style.overflow = 'hidden'; /* empêche le scroll bg */
+            }
+        }
+
+        function closeSlideNav() {
+            document.getElementById('slide-nav').classList.remove('open');
+            document.getElementById('slide-nav-overlay').classList.remove('visible');
+            document.getElementById('hamburger-btn').classList.remove('open');
+            document.body.style.overflow = '';
+        }
+
+        /* Fermer avec swipe gauche */
+        (function () {
+            let startX = 0;
+            const nav = document.getElementById('slide-nav');
+            nav.addEventListener('touchstart', e => { startX = e.touches[0].clientX; }, { passive: true });
+            nav.addEventListener('touchend',   e => {
+                if (startX - e.changedTouches[0].clientX > 60) closeSlideNav();
+            }, { passive: true });
+        })();
+
+        /* --- Sync état actif sidebar desktop + slide nav mobile --- */
+        (function () {
+            const _orig = window.showSection;
+            window.showSection = function (name) {
+                if (typeof _orig === 'function') _orig(name);
+
+                document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
+                const desk = document.getElementById('btn-' + name);
+                if (desk) desk.classList.add('active');
+
+                document.querySelectorAll('.slide-nav-item').forEach(el => el.classList.remove('active'));
+                const mob = document.getElementById('mob-btn-' + name);
+                if (mob) mob.classList.add('active');
+            };
+        })();
+    </script>
+
+</body>
+</html>
