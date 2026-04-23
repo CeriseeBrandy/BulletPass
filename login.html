@@ -610,27 +610,46 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("unlock-btn").innerHTML = 'CREATE →';
   }
 
-  // =========================
-  // 👤 AUTO FILL USERNAME
-  // =========================
-  const savedName = localStorage.getItem("bullet_nickname");
 
-  console.log("AUTO FILL:", savedName);
+  // ==============================
+// 🔁 AUTO FILL USERNAME
+// ==============================
+const savedName = localStorage.getItem("bullet_nickname");
 
-  if (savedName) {
-      const input = document.getElementById("nickname");
-      const checkbox = document.getElementById("remember-me");
+console.log("AUTO FILL:", savedName);
 
-      if (input) input.value = savedName;
-      if (checkbox) checkbox.checked = true;
+if (savedName) {
+    const input = document.getElementById("nickname");
+    const checkbox = document.getElementById("remember-me");
 
-      const box = document.querySelector('.custom-checkbox');
-      if (box) {
-          box.innerHTML = '<span style="color:#000;font-size:9px;font-weight:900;">✓</span>';
-          box.style.background = '#fff';
-          box.style.borderColor = '#fff';
-      }
-  }
+    if (input) input.value = savedName;
+    if (checkbox) checkbox.checked = true;
+
+    const box = document.querySelector('.custom-checkbox');
+    if (box) {
+        box.innerHTML = '<span style="color:#000;font-size:9px;font-weight:900;">✓</span>';
+        box.style.background = '#fff';
+        box.style.borderColor = '#fff';
+    }
+}
+
+// ==============================
+// 💾 SAVE USERNAME (REMEMBER ME)
+// ==============================
+function handleRememberMe() {
+    const input = document.getElementById("nickname");
+    const checkbox = document.getElementById("remember-me");
+
+    if (!input || !checkbox) return;
+
+    const nickname = input.value;
+
+    if (checkbox.checked) {
+        localStorage.setItem("bullet_nickname", nickname);
+    } else {
+        localStorage.removeItem("bullet_nickname");
+    }
+}
 
   // =========================
   // 👁️ TOGGLE PASSWORD
