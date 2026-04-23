@@ -336,10 +336,20 @@
   }
   .screen-card:hover { border-color: var(--border-bright); }
   .screen-placeholder {
-    height: 480px;
-    background: linear-gradient(160deg, #161616 0%, #0e0e0e 100%);
-    display: flex; flex-direction: column; padding: 28px 22px; gap: 10px;
-  }
+  height: 480px;
+  background: linear-gradient(160deg, #161616 0%, #0e0e0e 100%);
+  
+  padding: 0;          /* 🔥 enlève les marges internes */
+  overflow: hidden;    /* 🔥 coupe proprement l’image */
+  
+  display: block;      /* 🔥 enlève le flex */
+}
+.screen-placeholder img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
   .screen-ui-mock { display: flex; flex-direction: column; gap: 10px; width: 100%; }
   .mock-bar { height: 10px; border-radius: 50px; background: rgba(255,255,255,0.08); }
   .mock-bar-sm { height: 8px; width: 60%; border-radius: 50px; background: rgba(255,255,255,0.05); }
@@ -759,113 +769,59 @@ if (isPWA) {
   </section>
 
   <!-- SCREENS -->
-  <section id="screens">
-    <div class="container">
-      <div class="section-tag reveal">The App</div>
-      <h2 class="section-title reveal">BULLET IN ACTION</h2>
-      <p class="section-sub reveal reveal-delay-1">A look at Bullet's interface. Replace these mockups with your real screenshots whenever you're ready.</p>
+<section id="screens">
+  <div class="container">
+    <div class="section-tag reveal">The App</div>
+    <h2 class="section-title reveal">BULLET IN ACTION</h2>
+    <p class="section-sub reveal reveal-delay-1">
+      A fast, secure and minimal password manager.
+    </p>
 
-      <div class="screens-track-wrap">
-        <div class="screens-track" id="screensTrack">
-          <div class="screen-card">
-  <div class="screen-placeholder">
-    <img src="/assets/screens/login.png" alt="Login screen">
-  </div>
-  <div class="screen-label">Secure Access</div>
-</div>
+    <div class="screens-track-wrap">
+      <div class="screens-track" id="screensTrack">
 
-<div class="screen-card">
-  <div class="screen-placeholder">
-    <img src="/assets/screens/vault.png" alt="Vault screen">
-  </div>
-  <div class="screen-label">Password Vault</div>
-</div>
-
-<div class="screen-card">
-  <div class="screen-placeholder">
-    <img src="/assets/screens/generator.png" alt="Generator screen">
-  </div>
-  <div class="screen-label">Password Generator</div>
-</div>
-
-          <div class="screen-card">
-            <div class="screen-placeholder">
-              <div class="screen-ui-mock">
-                <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;">
-                  <div class="mock-bar" style="flex:1;height:32px;border-radius:8px;"></div>
-                  <div style="width:32px;height:32px;border-radius:8px;background:rgba(255,255,255,0.06);flex-shrink:0;"></div>
-                </div>
-                <div style="height:0.5px;background:var(--border);margin-bottom:12px;"></div>
-                <div class="mock-block"></div>
-                <div class="mock-block"></div>
-                <div class="mock-block"></div>
-                <div class="mock-block"></div>
-                <div class="mock-block"></div>
-                <div class="mock-block"></div>
-                <div class="mock-bar-sm" style="margin-top:8px;"></div>
-              </div>
-            </div>
-            <div class="screen-label">Search</div>
+        <!-- LOGIN -->
+        <div class="screen-card">
+          <div class="screen-placeholder">
+            <img src="/assets/screens/login.png" alt="Login screen">
           </div>
-
-          <div class="screen-card">
-            <div class="screen-placeholder" style="align-items:center;justify-content:center;">
-              <div style="text-align:center;">
-                <div style="font-size:36px;margin-bottom:16px;">▶</div>
-                <div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:2px;color:rgba(255,255,255,0.3);text-transform:uppercase;">Insert your<br>video here</div>
-              </div>
-            </div>
-            <div class="screen-label">Demo</div>
-          </div>
-
-          <div class="screen-card">
-            <div class="screen-placeholder">
-              <div class="screen-ui-mock">
-                <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
-                  <div style="width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,0.06);border:0.5px solid rgba(255,255,255,0.1);flex-shrink:0;"></div>
-                  <div style="flex:1;">
-                    <div class="mock-bar" style="width:70%;margin-bottom:6px;"></div>
-                    <div class="mock-bar-sm" style="width:45%;"></div>
-                  </div>
-                </div>
-                <div class="mock-block"></div>
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-                  <div class="mock-block"></div><div class="mock-block"></div>
-                  <div class="mock-block"></div><div class="mock-block"></div>
-                </div>
-                <div class="mock-chip" style="height:28px;margin-top:8px;border-radius:50px;"></div>
-              </div>
-            </div>
-            <div class="screen-label">Profile & Settings</div>
-          </div>
-
-          <div class="screen-card">
-            <div class="screen-placeholder" style="align-items:center;justify-content:center;">
-              <div style="text-align:center;">
-                <div style="width:48px;height:48px;border:1px dashed rgba(255,255,255,0.2);border-radius:12px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:22px;">+</div>
-                <div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:2px;color:rgba(255,255,255,0.2);text-transform:uppercase;">Your screenshot<br>here</div>
-              </div>
-            </div>
-            <div class="screen-label">Custom View</div>
-          </div>
+          <div class="screen-label">Secure Access</div>
         </div>
-      </div>
 
-      <div class="screens-nav reveal">
-        <div class="screens-dots" id="screensDots">
-          <div class="screens-dot active"></div>
-          <div class="screens-dot"></div>
-          <div class="screens-dot"></div>
-          <div class="screens-dot"></div>
-          <div class="screens-dot"></div>
+        <!-- VAULT -->
+        <div class="screen-card">
+          <div class="screen-placeholder">
+            <img src="/assets/screens/vault.png" alt="Vault screen">
+          </div>
+          <div class="screen-label">Password Vault</div>
         </div>
-        <div class="screens-arrows">
-          <button class="arrow-btn" id="arrowLeft">←</button>
-          <button class="arrow-btn" id="arrowRight">→</button>
+
+        <!-- GENERATOR -->
+        <div class="screen-card">
+          <div class="screen-placeholder">
+            <img src="/assets/screens/generator.png" alt="Generator screen">
+          </div>
+          <div class="screen-label">Password Generator</div>
         </div>
+
       </div>
     </div>
-  </section>
+
+    <div class="screens-nav reveal">
+      <div class="screens-dots" id="screensDots">
+        <div class="screens-dot active"></div>
+        <div class="screens-dot"></div>
+        <div class="screens-dot"></div>
+      </div>
+
+      <div class="screens-arrows">
+        <button class="arrow-btn" id="arrowLeft">←</button>
+        <button class="arrow-btn" id="arrowRight">→</button>
+      </div>
+    </div>
+
+  </div>
+</section>
 
   <!-- OPEN SOURCE -->
   <section id="opensource">
