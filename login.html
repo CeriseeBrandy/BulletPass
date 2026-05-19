@@ -604,12 +604,7 @@ nav {
 <script src="scripts/core.js"></script>
 <script src="scripts/crypto.js"></script>
 <script>
-  // 🔥 PWA seulement sur le web (pas Electron)
-  if (!navigator.userAgent.toLowerCase().includes('electron')) {
-    const script = document.createElement('script');
-    script.src = "scripts/pwa.js";
-    document.body.appendChild(script);
-  }
+ 
 
   // =========================
   // 🚀 INIT PAGE
@@ -672,41 +667,50 @@ nav {
 
   });
 
-  // =========================
-  // 🔐 LOGIN FUNCTION
-  // =========================
-  window.checkMasterPassword = async function () {
+ 
+window.checkMasterPassword = async function () {
+  const pass = document.getElementById("master-password").value;
+  const nickname = document.getElementById("nickname")?.value;
+  const remember = document.getElementById("remember-me")?.checked;
 
-    const pass = document.getElementById('master-password').value;
-    const nickname = document.getElementById('nickname')?.value;
-    const remember = document.getElementById('remember-me')?.checked;
+  if (!pass) return;
 
-    if (!pass) return;
+  const encrypted = localStorage.getItem("bullet_vault");
 
-    const encrypted = localStorage.getItem('bullet_vault');
+  try {
+    if (encrypted) {
+      const vault = await decryptVault(encrypted, pass);
 
-    try {
-      if (encrypted) {
-        await decryptVault(encrypted, pass);
-      } else {
-        const encryptedVault = await encryptVault([], pass);
-        localStorage.setItem('bullet_vault', encryptedVault);
+      if (!Array.isArray(vault)) {
+        throw new Error("Invalid vault format");
       }
-
-      localStorage.setItem("isLogged", "true");
-      sessionStorage.setItem("masterPass", pass);
-
-      if (remember && nickname) {
-        localStorage.setItem("bullet_nickname", nickname);
-      } else {
-        localStorage.removeItem("bullet_nickname");
-      }
-
-      window.location.href = "app.html";
-
-    } catch (e) {
-      console.error("LOGIN ERROR:", e);
-      alert("Wrong password or error");
+    } else {
+      const encryptedVault = await encryptVault([], pass);
+      localStorage.setItem("bullet_vault", encryptedVault);
     }
-  };
+
+    sessionStorage.setItem("masterPass", pass);
+    sessionStorage.setItem("bullet_session_unlocked", "true");
+
+    localStorage.removeItem("isLogged");
+    localStorage.removeItem("masterPass");
+
+    if (remember && nickname) {
+      localStorage.setItem("bullet_nickname", nickname);
+    } else {
+      localStorage.removeItem("bullet_nickname");
+    }
+
+    window.location.href = "app.html";
+
+  } catch (e) {
+    console.error("LOGIN ERROR:", e);
+
+    sessionStorage.removeItem("masterPass");
+    sessionStorage.removeItem("bullet_session_unlocked");
+
+    alert("Session locked / wrong password");
+  }
+};
+</script>
 </script>

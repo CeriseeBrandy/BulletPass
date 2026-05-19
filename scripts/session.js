@@ -1,15 +1,27 @@
 let inactivityTimer;
 let INACTIVITY_TIME = 2 * 60 * 1000;
 
-// 🔒 LOCK APP
-function lockApp() {
-    localStorage.removeItem("isLogged");
-    sessionStorage.removeItem("masterPass"); // 🔥 AJOUT
+function getSessionMasterPass() {
+    return sessionStorage.getItem("masterPass");
+}
 
+function isSessionUnlocked() {
+    return sessionStorage.getItem("bullet_session_unlocked") === "true"
+        && !!getSessionMasterPass();
+}
+
+function unlockSession(masterPass) {
+    sessionStorage.setItem("masterPass", masterPass);
+    sessionStorage.setItem("bullet_session_unlocked", "true");
+}
+
+function lockApp() {
+    sessionStorage.removeItem("masterPass");
+    sessionStorage.removeItem("bullet_session_unlocked");
+    window.cachedVault = null;
     window.location.href = "login.html";
 }
 
-// 🔁 Reset timer
 function resetInactivityTimer() {
     clearTimeout(inactivityTimer);
 
@@ -18,83 +30,70 @@ function resetInactivityTimer() {
     }, INACTIVITY_TIME);
 }
 
-// 🎯 INIT
-window.addEventListener('DOMContentLoaded', async () => {
+window.addEventListener("DOMContentLoaded", async () => {
+    const pass = getSessionMasterPass();
 
-    const pass = sessionStorage.getItem("masterPass");
-    const isLogged = localStorage.getItem("isLogged");
-
-    
-
-    // ❌ PAS LOG → redirect
-     if (!isLogged) {
-        
-        window.location.href = "login.html";
+    if (!isSessionUnlocked()) {
+        lockApp();
         return;
     }
 
     try {
-        // 🔐 restore crypto
         await loadCryptoKey(pass);
-
-        // 🔥 clé en mémoire
-        window.currentMasterPass = pass;
-
-        
-
     } catch (e) {
-        
-
-        localStorage.removeItem("isLogged");
-        localStorage.removeItem("masterPass");
-
-        window.location.href = "login.html";
+        console.error("Session restore failed:", e);
+        lockApp();
         return;
     }
 
-    // ⚙️ SETTINGS + TIMER
     loadInactivitySetting();
     setupInactivityInput();
 
-    ['click', 'keydown'].forEach(event => {
+    ["click", "keydown", "mousemove", "scroll"].forEach(event => {
         document.addEventListener(event, resetInactivityTimer, { passive: true });
     });
 
     resetInactivityTimer();
 
-    
-    // 📦 LOAD VAULT
-if (!window.__vaultLoaded) {
-    window.__vaultLoaded = true;
+    if (!window.__vaultLoaded) {
+        window.__vaultLoaded = true;
 
-    setTimeout(() => {
-        loadVault();
-    }, 50);
-}
+        setTimeout(() => {
+            loadVault();
+        }, 50);
+    }
 });
 
-// ⚙️ Settings
 function loadInactivitySetting() {
-    const saved = localStorage.getItem('bullet_inactivity');
+    const saved = localStorage.getItem("bullet_inactivity");
 
     if (saved) {
-        INACTIVITY_TIME = parseInt(saved) * 60 * 1000;
+        const minutes = parseInt(saved, 10);
 
-        const input = document.getElementById('inactivity-time');
+        if (!Number.isNaN(minutes) && minutes > 0) {
+            INACTIVITY_TIME = minutes * 60 * 1000;
+        }
+
+        const input = document.getElementById("inactivity-time");
         if (input) input.value = saved;
     }
 }
 
 function setupInactivityInput() {
-    const input = document.getElementById('inactivity-time');
+    const input = document.getElementById("inactivity-time");
 
     if (!input) return;
 
-    input.addEventListener('change', (e) => {
-        const value = e.target.value;
+    input.addEventListener("change", (e) => {
+        const minutes = parseInt(e.target.value, 10);
 
-        localStorage.setItem('bullet_inactivity', value);
-        INACTIVITY_TIME = value * 60 * 1000;
+        if (Number.isNaN(minutes) || minutes <= 0) {
+            bulletAlert("ERROR", "Invalid inactivity time.");
+            return;
+        }
+
+        localStorage.setItem("bullet_inactivity", String(minutes));
+        INACTIVITY_TIME = minutes * 60 * 1000;
 
         resetInactivityTimer();
     });

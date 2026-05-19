@@ -1,45 +1,56 @@
 {
-  "name": "bulletappclean",
+  "name": "bullet",
   "version": "1.0.0",
-  "description": "Bullet Password Manager",
+  "description": "Bullet Password Manager - Local Secure Vault",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
-    "build": "electron-builder"
+    "build": "electron-builder",
+    "build:linux": "electron-builder --linux AppImage",
+    "build:win": "electron-builder --win nsis"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/CeriseeBrandy/bullet-password-manager.git"
+  "author": {
+    "name": "CherryCreative",
+    "email": "contact@cherrycreative.dev"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "license": "UNLICENSED",
   "type": "commonjs",
   "devDependencies": {
     "electron": "^41.3.0",
     "electron-builder": "^24.13.3"
   },
   "build": {
-    "appId": "com.bullet.app",
+    "appId": "com.cherrycreative.bullet",
     "productName": "Bullet",
-    "artifactName": "Bullet-Setup.exe",
-
-    "asar": false,
-
+    "artifactName": "Bullet-${version}-${os}-${arch}.${ext}",
+    "asar": true,
     "directories": {
-      "buildResources": "assets"
+      "buildResources": "assets",
+      "output": "dist"
     },
-
     "files": [
-      "**/*",
-      "assets/**/*"
+      "main.js",
+      "preload.js",
+      "package.json",
+      "login.html",
+      "app.html",
+      "scripts/**/*",
+      "styles/**/*",
+      "assets/**/*",
+      "backups/**/*"
     ],
-
     "win": {
       "target": "nsis",
-      "icon": "icon.ico"
+      "icon": "assets/icon.ico"
     },
-
+    "linux": {
+      "target": [
+        "AppImage"
+      ],
+      "icon": "assets/icon.png",
+      "category": "Utility",
+      "maintainer": "CherryCreative <contact@cherrycreative.dev>"
+    },
     "nsis": {
       "oneClick": false,
       "perMachine": false,

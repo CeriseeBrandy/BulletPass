@@ -1004,3 +1004,90 @@ body::before {
 body.electron .sidebar {
   display: flex !important;
 }
+/* =========================================================
+   BULLET LOCAL TYPO — premium native
+========================================================= */
+:root {
+  --font-ui: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, Arial, sans-serif;
+  --font-display: "Segoe UI", system-ui, sans-serif;
+  --font-mono: "Cascadia Code", "Cascadia Mono", Consolas, monospace;
+}
+
+body,
+input,
+button {
+  font-family: var(--font-ui) !important;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.s-logo,
+.main-topbar-title,
+.gen-title,
+.custom-modal h3,
+.mob-logo,
+.slide-nav-header span {
+  font-family: var(--font-display) !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.04em !important;
+}
+
+.gen-title {
+  font-size: 38px !important;
+  line-height: 1.05 !important;
+}
+
+.main-topbar-title {
+  font-size: 24px !important;
+  font-weight: 700 !important;
+  text-transform: none !important;
+}
+
+.s-item,
+.btn-white,
+.btn-ghost,
+.vault-count,
+.vault-group-name,
+.entry-status,
+.slider-label,
+.switches-row label,
+.toast,
+.s-eyebrow,
+.gen-subtitle,
+.s-footer,
+#gen-btn,
+#unlock-btn {
+  font-family: var(--font-ui) !important;
+  letter-spacing: 0.08em !important;
+}
+
+#pass-display,
+#inactivity-time {
+  font-family: var(--font-mono) !important;
+}
+
+.s-item {
+  font-size: 10px !important;
+  letter-spacing: 0.12em !important;
+}
+
+.switches-row label {
+  font-size: 10px !important;
+  letter-spacing: 0.06em !important;
+}
+
+.gen-subtitle,
+.s-eyebrow {
+  letter-spacing: 0.14em !important;
+}
+
+.btn-white,
+#gen-btn,
+#unlock-btn {
+  letter-spacing: 0.12em !important;
+}
+
+#pass-display {
+  letter-spacing: 0.08em !important;
+  font-size: 17px !important;
+}
